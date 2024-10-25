@@ -2,10 +2,9 @@ import * as faceapi from 'face-api.js';
 import React from 'react';
 
 function App() {
-
   const [modelsLoaded, setModelsLoaded] = React.useState(false);
   const [captureVideo, setCaptureVideo] = React.useState(false);
-
+  const [activeTab, setActiveTab] = React.useState('home');
   const videoRef = React.useRef();
   const videoHeight = 480;
   const videoWidth = 640;
@@ -14,14 +13,13 @@ function App() {
   React.useEffect(() => {
     const loadModels = async () => {
       const MODEL_URL = process.env.PUBLIC_URL + '/models';
-
       Promise.all([
         faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
         faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
         faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
         faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
       ]).then(() => setModelsLoaded(true));
-    }
+    };
     loadModels();
   }, []);
 
@@ -37,22 +35,16 @@ function App() {
       .catch(err => {
         console.error("error:", err);
       });
-  }
+  };
 
   const handleVideoOnPlay = () => {
     setInterval(async () => {
       if (canvasRef && canvasRef.current) {
-        const displaySize = {
-          width: videoWidth,
-          height: videoHeight
-        };
-
+        const displaySize = { width: videoWidth, height: videoHeight };
         faceapi.matchDimensions(canvasRef.current, displaySize);
 
         const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
-
         const resizedDetections = faceapi.resizeResults(detections, displaySize);
-
         const ctx = canvasRef.current.getContext('2d');
         ctx.clearRect(0, 0, videoWidth, videoHeight);
 
@@ -62,6 +54,7 @@ function App() {
         // faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
 
         // 遍历每个检测框，绘制文字到人脸正上方
+
         resizedDetections.forEach(detection => {
           const { x, y, width } = detection.detection.box;
 
@@ -79,39 +72,82 @@ function App() {
     videoRef.current.pause();
     videoRef.current.srcObject.getTracks()[0].stop();
     setCaptureVideo(false);
-  }
+  };
 
   return (
     <div>
       <div style={{ textAlign: 'center', padding: '10px' }}>
-        {
-          captureVideo && modelsLoaded ?
-            <button onClick={closeWebcam} style={{ cursor: 'pointer', backgroundColor: 'green', color: 'white', padding: '15px', fontSize: '25px', border: 'none', borderRadius: '10px' }}>
-              Close Webcam
-            </button>
-            :
-            <button onClick={startVideo} style={{ cursor: 'pointer', backgroundColor: 'green', color: 'white', padding: '15px', fontSize: '25px', border: 'none', borderRadius: '10px' }}>
-              Open Webcam
-            </button>
-        }
+        {captureVideo && modelsLoaded ? (
+          <button onClick={closeWebcam} style={buttonStyle}>Close Webcam</button>
+        ) : (
+          <button onClick={startVideo} style={buttonStyle}>Open Webcam</button>
+        )}
       </div>
-      {
-        captureVideo ?
-          modelsLoaded ?
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'center', padding: '10px' }}>
-                <video ref={videoRef} height={videoHeight} width={videoWidth} onPlay={handleVideoOnPlay} style={{ borderRadius: '10px' }} />
-                <canvas ref={canvasRef} style={{ position: 'absolute' }} />
-              </div>
-            </div>
-            :
-            <div>loading...</div>
-          :
-          <>
-          </>
-      }
+      {captureVideo && modelsLoaded && (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '10px', position: 'relative' }}>
+          <video ref={videoRef} height={videoHeight} width={videoWidth} playsInline controls={false} onPlay={handleVideoOnPlay} style={{ borderRadius: '10px' }} />
+          <canvas ref={canvasRef} style={{ position: 'absolute' }} />
+        </div>
+      )}
+      {/* 显示直播链接内容 */}
+      <div style={{ textAlign: 'center', padding: '20px' }}>
+        {activeTab === 'live' && (
+          <div>
+            <h2>直播链接示例</h2>
+            <a href="https://example.com/live" target="_blank" rel="noopener noreferrer" style={{ color: 'blue', textDecoration: 'underline' }}>
+              观看直播
+            </a>
+          </div>
+        )}
+      </div>
+      {/* 底部导航 */}
+      <div style={tabContainerStyle}>
+        {['home', 'live', 'profile'].map(tab => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            style={{
+              ...tabStyle,
+              color: activeTab === tab ? '#fff' : '#888',
+              backgroundColor: activeTab === tab ? 'blue' : '#f0f0f0',
+            }}
+          >
+            {tab === 'home' ? '首页' : tab === 'live' ? '直播' : '我的'}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
+
+const buttonStyle = {
+  cursor: 'pointer',
+  backgroundColor: 'green',
+  color: 'white',
+  padding: '15px',
+  fontSize: '25px',
+  border: 'none',
+  borderRadius: '10px'
+};
+
+const tabContainerStyle = {
+  display: 'flex',
+  justifyContent: 'space-around',
+  padding: '10px 0',
+  borderTop: '1px solid #ddd',
+  position: 'fixed',
+  bottom: '0',
+  width: '100%',
+  backgroundColor: 'blue',
+  boxShadow: '0 -1px 5px rgba(0,0,0,0.1)'
+};
+
+const tabStyle = {
+  padding: '10px 20px',
+  cursor: 'pointer',
+  fontSize: '18px',
+  border: 'none',
+  background: 'none'
+};
 
 export default App;
