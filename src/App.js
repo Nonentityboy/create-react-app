@@ -57,9 +57,9 @@ function App() {
         ctx.clearRect(0, 0, videoWidth, videoHeight);
 
         // 绘制人脸检测框和其他元素
-        faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
-        faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
-        faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
+        // faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
+        // faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
+        // faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
 
         // 遍历每个检测框，绘制文字到人脸正上方
         resizedDetections.forEach(detection => {
