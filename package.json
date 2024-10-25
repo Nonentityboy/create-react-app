@@ -1,6 +1,7 @@
 {
   "private": true,
   "dependencies": {
+    "face-api.js": "0.22.2",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",

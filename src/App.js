@@ -1,23 +1,115 @@
-import logo from './logo.svg';
-import './App.css';
+import * as faceapi from 'face-api.js';
+import React from 'react';
 
 function App() {
+
+  const [modelsLoaded, setModelsLoaded] = React.useState(false);
+  const [captureVideo, setCaptureVideo] = React.useState(false);
+
+  const videoRef = React.useRef();
+  const videoHeight = 480;
+  const videoWidth = 640;
+  const canvasRef = React.useRef();
+
+  React.useEffect(() => {
+    const loadModels = async () => {
+      const MODEL_URL = process.env.PUBLIC_URL + '/models';
+
+      Promise.all([
+        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+        faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+        faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
+        faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
+      ]).then(() => setModelsLoaded(true));
+    }
+    loadModels();
+  }, []);
+
+  const startVideo = () => {
+    setCaptureVideo(true);
+    navigator.mediaDevices
+      .getUserMedia({ video: { width: 300 } })
+      .then(stream => {
+        let video = videoRef.current;
+        video.srcObject = stream;
+        video.play();
+      })
+      .catch(err => {
+        console.error("error:", err);
+      });
+  }
+
+  const handleVideoOnPlay = () => {
+    setInterval(async () => {
+      if (canvasRef && canvasRef.current) {
+        const displaySize = {
+          width: videoWidth,
+          height: videoHeight
+        };
+
+        faceapi.matchDimensions(canvasRef.current, displaySize);
+
+        const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
+
+        const resizedDetections = faceapi.resizeResults(detections, displaySize);
+
+        const ctx = canvasRef.current.getContext('2d');
+        ctx.clearRect(0, 0, videoWidth, videoHeight);
+
+        // 绘制人脸检测框和其他元素
+        faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
+        faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
+        faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
+
+        // 遍历每个检测框，绘制文字到人脸正上方
+        resizedDetections.forEach(detection => {
+          const { x, y, width } = detection.detection.box;
+
+          // 在每个人脸的上方 10 像素处绘制文字
+          ctx.font = "20px Arial";
+          ctx.fillStyle = "red";
+          ctx.textAlign = "center"; // 让文字在X轴居中
+          ctx.fillText("我要当网红！！！！", x + width / 2, y - 10); // y - 10 保证文字在框的上方
+        });
+      }
+    }, 1000);
+  };
+
+  const closeWebcam = () => {
+    videoRef.current.pause();
+    videoRef.current.srcObject.getTracks()[0].stop();
+    setCaptureVideo(false);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          main
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <div style={{ textAlign: 'center', padding: '10px' }}>
+        {
+          captureVideo && modelsLoaded ?
+            <button onClick={closeWebcam} style={{ cursor: 'pointer', backgroundColor: 'green', color: 'white', padding: '15px', fontSize: '25px', border: 'none', borderRadius: '10px' }}>
+              Close Webcam
+            </button>
+            :
+            <button onClick={startVideo} style={{ cursor: 'pointer', backgroundColor: 'green', color: 'white', padding: '15px', fontSize: '25px', border: 'none', borderRadius: '10px' }}>
+              Open Webcam
+            </button>
+        }
+      </div>
+      {
+        captureVideo ?
+          modelsLoaded ?
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '10px' }}>
+                <video ref={videoRef} height={videoHeight} width={videoWidth} onPlay={handleVideoOnPlay} style={{ borderRadius: '10px' }} />
+                <canvas ref={canvasRef} style={{ position: 'absolute' }} />
+              </div>
+            </div>
+            :
+            <div>loading...</div>
+          :
+          <>
+          </>
+      }
     </div>
   );
 }
