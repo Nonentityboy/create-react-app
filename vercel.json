@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://hackback.xylkt.cn/api/:path*"
+      "destination": "http://124.222.6.103:8866/api/:path*"
     }
   ]
 }
