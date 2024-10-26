@@ -321,7 +321,7 @@ function FaceDetectionVideo({ messages }) {
                         className="ai-messages"
                         onScroll={handleScroll}
                         ref={containerRef}
-                        style={{ overflowY: 'auto', maxHeight: '100px' }} // 设置最大高度以启用滚动
+                        style={{ overflowY: 'auto', maxHeight: '185px' }} // 设置最大高度以启用滚动
                     >
                         {messages.map((message) => (
                             <div key={message.id} className="message-item">
