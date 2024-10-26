@@ -274,7 +274,6 @@ function FaceDetectionVideo({ messages }) {
     const [autoScroll, setAutoScroll] = useState(true);
 
     useEffect(() => {
-        // 自动滚动到最下面
         if (autoScroll) {
             messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         }
@@ -283,8 +282,8 @@ function FaceDetectionVideo({ messages }) {
     const handleScroll = () => {
         if (containerRef.current) {
             const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-            // 检查是否滚动到接近底部
-            setAutoScroll(scrollHeight - scrollTop === clientHeight);
+            // 判断用户是否手动滚动过，来决定是否继续自动滚动
+            setAutoScroll(scrollTop + clientHeight >= scrollHeight - 5);
         }
     };
 
