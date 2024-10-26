@@ -28,8 +28,10 @@ function App() {
         console.error('Error fetching comments:', error);
       }
     };
-    const interval = setInterval(fetchComments, 2000);
-    return () => clearInterval(interval);
+    const interval1 = setInterval(fetchComments, 2000);
+    return () => {
+      clearInterval(interval1)
+    };
   }, []);
 
   const tabs = [
@@ -89,7 +91,7 @@ function App() {
           ))}
         </TabBar>
       </div>
-      {activeKey === 'home' && <FaceDetectionVideo messages={messages}  />}
+      {activeKey === 'home' && <FaceDetectionVideo messages={messages} />}
     </div>
   );
 }

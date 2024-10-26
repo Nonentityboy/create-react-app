@@ -46,6 +46,39 @@ function FaceDetectionVideo({ messages }) {
     const videoHeight = 480;
     const videoWidth = 640;
 
+
+    const captureScreenshot = () => {
+        if (videoRef.current) {
+            const canvas = document.createElement("canvas");
+            canvas.width = videoWidth;
+            canvas.height = videoHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(videoRef.current, 0, 0, videoWidth, videoHeight);
+            return canvas.toDataURL("image/png");
+        }
+        return null;
+    };
+
+    const sendScreenshot = useCallback(async () => {
+        const screenshot = captureScreenshot();
+        if (screenshot) {
+            try {
+                const roomId = "1";
+                await postRequest(`/api/room_update/modal`, {
+                    room_id: roomId,
+                    img: screenshot,
+                });
+            } catch (error) {
+                console.error('Error sending screenshot:', error);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        const interval = setInterval(sendScreenshot, 5000); // 每5秒发送一次截图
+        return () => clearInterval(interval);
+    }, [sendScreenshot]);
+
     // 新增状态和事件处理
     const [isPaused, setIsPaused] = useState(false);
 
