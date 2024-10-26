@@ -138,7 +138,26 @@ function FaceDetectionVideo({ messages }) {
                     ctx.font = "36px Arial";
                     ctx.fillStyle = "red";
                     ctx.textAlign = "center";
-                    ctx.fillText("我要当网红", x + width / 2, y - 10);
+                    // ctx.fillText("我要当网红", x + width / 2, y - 10);
+
+                    const img = new Image();
+                    img.src = 'https://s21.ax1x.com/2024/10/26/pA0FnC6.png'; // 替换为你的图片URL
+
+                    img.onload = () => {
+                        resizedDetections.forEach(detection => {
+                            const { x, y, width } = detection.detection.box;
+
+                            // 设置图片的缩放宽度和高度
+                            const imgWidth = 200; // 根据需要调整
+                            const imgHeight = 150; // 根据需要调整
+
+                            const imgX = x + width / 2 - imgWidth / 2; // 调整图片居中
+                            const imgY = y - imgHeight - 10; // 图片显示在原来文字的上方
+
+                            // 绘制缩放后的图片
+                            ctx.drawImage(img, imgX, imgY, imgWidth, imgHeight);
+                        });
+                    };
 
                 });
             }
@@ -248,7 +267,22 @@ function FaceDetectionVideo({ messages }) {
             )}
             {captureVideo && modelsLoaded ? (
                 <div className="operate-container">
-                    <div className={`overlay ${isPaused ? 'active' : ''}`}></div>
+                    {
+                        isPaused && (
+                            <div className={`active`}>
+                                <div>
+                                    <div>已暂停</div>
+                                    <div>点击继续</div>
+                                </div>
+                                <img
+                                    src={startIcon}
+                                    onClick={handleResume}
+                                    className="pause-button"
+                                />
+                            </div>
+                        )
+                    }
+
                     <img src={menuIcon} alt="Menu Icon" className="button-icon" />
                     <img src={backIcon} onClick={closeWebcam} className="button-icon back-button" alt="Back Icon" />
                     <img
