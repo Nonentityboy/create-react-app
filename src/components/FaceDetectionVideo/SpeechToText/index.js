@@ -56,13 +56,8 @@ function SpeechToText({ onTranscriptChange, isPaused }) {
     }, [isPaused]);
 
     return (
-        <div className="speech-to-text">
-            <Input
-                placeholder="语音识别结果将显示在此处..."
-                value={transcript}
-                readOnly
-            />
-        </div>
+        <>
+        </>
     );
 }
 

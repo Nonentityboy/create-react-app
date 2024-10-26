@@ -11,15 +11,15 @@ import backIcon from '../../assets/back.svg';
 import './index.css';
 
 const user = {
-    avatar: 'https://raw.githubusercontent.com/Nonentityboy/PicGoToGitHub/master/1.png', // 替换为实际头像 URL
+    avatar: 'https://s21.ax1x.com/2024/10/26/pA09y9S.png', // 替换为实际头像 URL
     name: '颜',
     id: '18838292',
 };
 
 const audienceAvatars = [
-    'https://raw.githubusercontent.com/Nonentityboy/PicGoToGitHub/master/1.png',
-    'https://raw.githubusercontent.com/Nonentityboy/PicGoToGitHub/master/1.png',
-    'https://raw.githubusercontent.com/Nonentityboy/PicGoToGitHub/master/1.png',
+    'https://s21.ax1x.com/2024/10/26/pA09y9S.png',
+    'https://s21.ax1x.com/2024/10/26/pA09y9S.png',
+    'https://s21.ax1x.com/2024/10/26/pA09y9S.png',
     // 其他观众头像 URL
 ];
 
@@ -167,7 +167,7 @@ function FaceDetectionVideo({ messages }) {
             ) : (
                     <div className="setup-container">
                         <div className="setup-title">定制您的主播人设：</div>
-                        <img src="https://raw.githubusercontent.com/Nonentityboy/PicGoToGitHub/master/first.jpg" alt="直播图标" className="setup-image" />
+                        <img src="https://s21.ax1x.com/2024/10/26/pA09ccQ.jpg" alt="直播图标" className="setup-image" />
                         <Button color='primary' fill='solid' onClick={startVideo}>一键直播</Button>
                     </div>
                 )}
