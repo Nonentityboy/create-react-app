@@ -5,6 +5,7 @@ import './index.css'; // 引入独立的CSS文件
 
 function FaceDetectionVideo({ messages, addMessage }) {
     const [modelsLoaded, setModelsLoaded] = useState(false);
+    // 控制开启关闭直播
     const [captureVideo, setCaptureVideo] = useState(false);
     const videoRef = useRef();
     const canvasRef = useRef();
@@ -42,13 +43,15 @@ function FaceDetectionVideo({ messages, addMessage }) {
     const handleVideoOnPlay = () => {
         setInterval(async () => {
             if (canvasRef.current) {
-                const displaySize = { width: videoWidth, height: videoHeight };
+                const displaySize = { width: videoRef.current.offsetWidth, height: videoRef.current.offsetHeight };
                 faceapi.matchDimensions(canvasRef.current, displaySize);
 
-                const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
+                const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions())
+                    .withFaceLandmarks()
+                    .withFaceExpressions();
                 const resizedDetections = faceapi.resizeResults(detections, displaySize);
                 const ctx = canvasRef.current.getContext('2d');
-                ctx.clearRect(0, 0, videoWidth, videoHeight);
+                ctx.clearRect(0, 0, displaySize.width, displaySize.height);
 
                 resizedDetections.forEach(detection => {
                     const { x, y, width } = detection.detection.box;
@@ -63,6 +66,7 @@ function FaceDetectionVideo({ messages, addMessage }) {
         }, 1000);
     };
 
+
     const closeWebcam = () => {
         videoRef.current.pause();
         videoRef.current.srcObject.getTracks()[0].stop();
@@ -73,6 +77,15 @@ function FaceDetectionVideo({ messages, addMessage }) {
         <div className="face-detection-container">
             {captureVideo && modelsLoaded && (
                 <div className="video-wrapper">
+                    {/* 顶部效果 */}
+                    <div className="bottom-left-container">
+                        <div className="top-overlay">
+                            ⚠️直播提倡绿色直播，严禁涉及政治、涉恐、涉黄、聚众闹事、返现等内容，网警24小时巡查。
+                    </div>
+                        <div className="live-topic">本场直播主题是【从心开始】</div>
+                    </div>
+
+
                     <video ref={videoRef} height={videoHeight} width={videoWidth} playsInline controls={false} onPlay={handleVideoOnPlay} className="video-stream" />
                     <canvas ref={canvasRef} className="video-canvas" />
 
@@ -88,14 +101,16 @@ function FaceDetectionVideo({ messages, addMessage }) {
                 </div>
             )}
             {captureVideo && modelsLoaded ? (
-                <Button color='primary' fill='outline' onClick={closeWebcam}>关闭直播</Button>
+                <Button color='primary' fill='outline' onClick={closeWebcam} className="close-button">
+                    关闭直播
+                </Button>
             ) : (
-                <div className="setup-container">
-                    <div className="setup-title">定制您的主播人设：</div>
-                    <img src="https://raw.githubusercontent.com/Nonentityboy/PicGoToGitHub/master/first.jpg" alt="直播图标" className="setup-image" />
-                    <Button color='primary' fill='solid' onClick={startVideo}>一键直播</Button>
-                </div>
-            )}
+                    <div className="setup-container">
+                        <div className="setup-title">定制您的主播人设：</div>
+                        <img src="https://raw.githubusercontent.com/Nonentityboy/PicGoToGitHub/master/first.jpg" alt="直播图标" className="setup-image" />
+                        <Button color='primary' fill='solid' onClick={startVideo}>一键直播</Button>
+                    </div>
+                )}
         </div>
     );
 }
