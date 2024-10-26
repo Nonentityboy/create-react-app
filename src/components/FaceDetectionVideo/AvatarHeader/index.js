@@ -16,20 +16,22 @@ function AvatarHeader({ user, audienceCount, audienceAvatars }) {
     const [animatedPopularity, setAnimatedPopularity] = useState(0); // 人气值的动画效果
 
     useEffect(() => {
-        // 每隔 5 秒轮询获取人气增量
-        const fetchPopularityIncrement = async () => {
+        // 每隔 5 秒轮询获取人气全量值
+        const fetchPopularity = async () => {
             try {
                 let roomId = 1;
                 const result = await getRequest(`/api/room_score/${roomId}`);
-                const popularityIncrement = result; // 假设 API 返回 { increment: 50 }
-                if (popularityIncrement > 0) {
-                    animatePopularityIncrease(popularityIncrement); // 调用增量动画
+                const newPopularity = result; // 假设 API 返回全量人气值
+                const increment = newPopularity - popularity;
+                if (increment > 0) {
+                    animatePopularityIncrease(increment); // 调用增量动画
                 }
+                setPopularity(newPopularity); // 更新为新的人气值
             } catch (error) {
-                console.error('Error fetching popularity increment:', error);
+                console.error('Error fetching popularity:', error);
             }
         };
-        const interval = setInterval(fetchPopularityIncrement, 5000); // 每5秒获取一次人气增量
+        const interval = setInterval(fetchPopularity, 5000); // 每5秒获取一次人气全量
         return () => clearInterval(interval);
     }, [popularity]);
 
@@ -49,7 +51,6 @@ function AvatarHeader({ user, audienceCount, audienceAvatars }) {
 
             if (step >= steps) {
                 clearInterval(interval);
-                setPopularity(prevPopularity => prevPopularity + increment); // 确保最终人气值增加
                 setAnimatedPopularity(0); // 复位动画积分
                 setIsAnimating2(false);
             }
