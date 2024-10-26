@@ -1,31 +1,43 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Button } from 'antd-mobile';
 import * as faceapi from 'face-api.js';
-import { LeftOutline } from 'antd-mobile-icons';
+import { throttle } from 'lodash';
+import taskIcon from '../../assets/task0.svg';
+import taskIcon0 from '../../assets/task00.svg';
+
 import AvatarHeader from './AvatarHeader';
 import SpeechToText from './SpeechToText';
 import menuIcon from '../../assets/menu.svg';
 import pauseIcon from '../../assets/pause.svg';
 import startIcon from '../../assets/start.svg';
 import backIcon from '../../assets/back.svg';
+
+import task1Icon from '../../assets/task1.svg';
+import task2Icon from '../../assets/task2.svg';
+import { postRequest } from '../../api';
 import './index.css';
 
 const user = {
-    avatar: 'https://s21.ax1x.com/2024/10/26/pA09y9S.png', // 替换为实际头像 URL
-    name: '颜',
+    avatar: 'https://s21.ax1x.com/2024/10/26/pA0PxSO.jpg', // 替换为实际头像 URL
+    name: '沈',
     id: '18838292',
 };
 
 const audienceAvatars = [
-    'https://s21.ax1x.com/2024/10/26/pA09y9S.png',
-    'https://s21.ax1x.com/2024/10/26/pA09y9S.png',
-    'https://s21.ax1x.com/2024/10/26/pA09y9S.png',
+    'https://s21.ax1x.com/2024/10/26/pA0PzlD.jpg',
+    'https://s21.ax1x.com/2024/10/26/pA0ipOH.jpg',
+    'https://s21.ax1x.com/2024/10/26/pA0iCmd.jpg',
+    'https://s21.ax1x.com/2024/10/26/pA0iP0A.jpg',
     // 其他观众头像 URL
 ];
 
 const audienceCount = 2000;
 
 function FaceDetectionVideo({ messages }) {
+    // task任务控制
+    const [openTaskNum, setOpenTaskNum] = useState(0);
+
+
     const [modelsLoaded, setModelsLoaded] = useState(false);
     // 控制开启关闭直播
     const [captureVideo, setCaptureVideo] = useState(false);
@@ -107,10 +119,23 @@ function FaceDetectionVideo({ messages }) {
         setCaptureVideo(false);
     };
 
-    const handleTranscriptChange = (text) => {
-        console.log({ text })
-        // addMessage({ name: user.name, text, emoji: '🎤' });
-    };
+    const handleTranscriptChange = useCallback(
+        throttle(async (text) => {
+            // 调用接口
+            try {
+                let roomId = "1";
+                const result = await postRequest(`/api/room_update/text`, {
+                    room_id: roomId,
+                    text,
+                });
+
+                console.log({ result, text })
+            } catch (error) {
+                console.error('Error fetching comments:', error);
+            }
+        }, 5000),
+        []
+    );
 
     return (
         <div className="face-detection-container">
@@ -149,6 +174,43 @@ function FaceDetectionVideo({ messages }) {
                             </div>
                         ))}
                     </div>
+
+                    {/* 开场任务 */}
+                    {
+                        openTaskNum === 0 && (
+                            <div className="ai-open-task" onClick={() => setOpenTaskNum(1)}>
+                                <img src={task1Icon} alt="Menu Icon" className="ai-open-task-icon" />
+                                <span>请随机选一条留言进行回复！</span>
+                                <img src={task2Icon} alt="Menu Icon" className="ai-open-task-icon2" />
+                            </div>
+                        )
+                    }
+
+                    {/* 顶部任务 */}
+                    {
+                        openTaskNum === 1 && (
+                            <>
+                                <div className="avatar-header-open" >
+                                    <img className="avatar-header-open-icon" src={taskIcon}></img>
+                                    <span>开启一场经典直播任务</span>
+                                </div>
+                                <div onClick={() => setOpenTaskNum(2)} className="avatar-header-open avatar-header-open2">
+                                    <img className="avatar-header-open-icon" src={taskIcon0}></img>
+                                    <span>你已经解锁了观众千人成就！</span>
+                                </div>
+                            </>
+                        )
+                    }
+                    {
+                        openTaskNum === 2 && (
+                            <div className="avatar-header-open3" onClick={() => setOpenTaskNum(0)}>
+                                <img className="avatar-header-open3icon"
+                                    src="https://s21.ax1x.com/2024/10/26/pA0PbwR.jpg" />
+                            </div>
+                        )
+
+                    }
+
                 </div>
             )}
             {captureVideo && modelsLoaded ? (

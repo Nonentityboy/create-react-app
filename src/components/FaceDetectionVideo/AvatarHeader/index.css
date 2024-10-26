@@ -43,7 +43,7 @@
 
 .like-icon {
     font-size: 24px;
-    color: #ff5f5f; /* 心形图标的颜色 */
+    color: #ff5f5f;
     margin-left: 10px;
 }
 
@@ -57,7 +57,8 @@
     height: 30px;
     border-radius: 50%;
     border: 2px solid #fff;
-    margin-left: -10px; /* 重叠效果 */
+    margin-left: -10px;
+    /* 重叠效果 */
 }
 
 .audience-count {

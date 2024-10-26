@@ -1,6 +1,7 @@
 .face-detection-container {
     text-align: center;
-    height: 100vh; /* 拉满整个页面高度 */
+    height: 100vh;
+    /* 拉满整个页面高度 */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -18,26 +19,64 @@
 
 .video-stream {
     border-radius: 10px;
-    height: 100%; /* 确保视频高度为100% */
-    width: 100%; /* 确保视频宽度为100% */
-    object-fit: cover; /* 根据视频内容调整填充方式 */
+    height: 100%;
+    /* 确保视频高度为100% */
+    width: 100%;
+    /* 确保视频宽度为100% */
+    object-fit: cover;
+    /* 根据视频内容调整填充方式 */
 }
 
 .video-canvas {
     position: absolute;
     top: 0;
-    left: 0;
-    height: 100%; /* 覆盖整个视频高度 */
-    width: 100%; /* 覆盖整个视频宽度 */
-    pointer-events: none; /* 确保 canvas 不会阻挡视频的点击事件 */
+    left: 5px;
+    height: 100%;
+    /* 覆盖整个视频高度 */
+    width: 100%;
+    /* 覆盖整个视频宽度 */
+    pointer-events: none;
+    /* 确保 canvas 不会阻挡视频的点击事件 */
 }
 
 
 .ai-messages {
     position: absolute;
+    bottom: 60px;
+    max-height: 100px;
+    overflow: auto;
+    left: 5px;
+    width: 65%;
+}
+
+.ai-open-task {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     bottom: 10px;
-    left: 0;
-    width: 60%;
+    width: 70%;
+    position: absolute;
+    color: #fff;
+    border-radius: 24px;
+    border: 1px solid #fff;
+    padding: 0px 10px;
+    background-color: rgba(88, 101, 146, 0.5);
+    left: 5px;
+}
+
+.ai-open-task-icon {
+    padding: 0px;
+    width: 35px;
+    height: 30px;
+    margin: 8px 0;
+    border-radius: 50%;
+}
+
+.ai-open-task-icon2 {
+    padding: 0px;
+    width: 25px;
+    margin: 8px 0;
+    border-radius: 50%;
 }
 
 .message-item {
@@ -74,7 +113,8 @@
     position: absolute;
     bottom: 10px;
     right: 10px;
-    z-index: 5; /* 确保在背景蒙层之上 */
+    z-index: 5;
+    /* 确保在背景蒙层之上 */
 }
 
 .button-icon {
@@ -97,32 +137,39 @@
 
 .bottom-left-container {
     position: absolute;
-    bottom: 160px; /* 距离底部20px */
-    left: 0px; /* 距离左侧20px */
-    z-index: 2; /* 确保内容在视频上方 */
+    bottom: 165px;
+    /* 距离底部20px */
+    left: 5px;
+    /* 距离左侧20px */
+    z-index: 2;
+    /* 确保内容在视频上方 */
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px; /* 每条消息之间的间距 */
+    gap: 10px;
+    /* 每条消息之间的间距 */
 }
 
 .top-overlay {
     width: 100%;
     max-width: 230px;
     padding: 10px;
-    background: rgba(0, 0, 0, 0.6); /* 半透明背景 */
+    background: rgba(0, 0, 0, 0.6);
+    /* 半透明背景 */
     color: orange;
     font-size: 12px;
     border-radius: 10px;
     text-align: left;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    /* 添加阴影效果 */
 }
 
 .live-topic {
     width: 100%;
     max-width: 230px;
     padding: 8px;
-    background: rgba(0, 0, 0, 0.4); /* 半透明背景 */
+    background: rgba(0, 0, 0, 0.4);
+    /* 半透明背景 */
     color: yellow;
     font-size: 12px;
     border-radius: 8px;
@@ -143,3 +190,36 @@
     100% { opacity: 0; }
 } */
 
+.avatar-header-open {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    color: #fff;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgba(236, 204, 151, 0.6);
+}
+
+.avatar-header-open2 {
+    top: 100px;
+    background-color: rgba(175, 113, 148, 0.6);
+}
+
+.avatar-header-open3 {
+    position: absolute;
+    width: calc(80%);
+    border-radius: 10px;
+    z-index: 10;
+}
+
+.avatar-header-open3icon {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.avatar-header-open-icon {
+    padding-right: 10px;
+    width: 25px;
+}
