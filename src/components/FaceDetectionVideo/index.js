@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from 'antd-mobile';
 import * as faceapi from 'face-api.js';
+import './index.css'; // 引入独立的CSS文件
 
 function FaceDetectionVideo({ messages, addMessage }) {
     const [modelsLoaded, setModelsLoaded] = useState(false);
@@ -69,50 +70,32 @@ function FaceDetectionVideo({ messages, addMessage }) {
     };
 
     return (
-        <div style={{ textAlign: 'center', padding: '10px' }}>
-            {captureVideo && modelsLoaded ? (
-                <Button color='primary' fill='outline' onClick={closeWebcam}>关闭直播</Button>
-            ) : (
-                <Button color='primary' fill='solid' onClick={startVideo}>一键直播</Button>
-            )}
+        <div className="face-detection-container">
             {captureVideo && modelsLoaded && (
-                <div style={{ display: 'flex', justifyContent: 'center', padding: '10px', position: 'relative' }}>
-                    <video ref={videoRef} height={videoHeight} width={videoWidth} playsInline controls={false} onPlay={handleVideoOnPlay} style={{ borderRadius: '10px' }} />
-                    <canvas ref={canvasRef} style={{ position: 'absolute' }} />
+                <div className="video-wrapper">
+                    <video ref={videoRef} height={videoHeight} width={videoWidth} playsInline controls={false} onPlay={handleVideoOnPlay} className="video-stream" />
+                    <canvas ref={canvasRef} className="video-canvas" />
 
                     {/* AI Agent Messages */}
-                    <div style={{ position: 'absolute', bottom: '10px', left: '0', width: '80%' }}>
-                        {messages.slice(-5).map((message) => ( // 仅显示最新的三条消息
-                            <div
-                                key={message.id}
-                                style={{
-                                    padding: '10px',
-                                    margin: '5px 0',
-                                    background: 'rgba(255, 255, 255, 0.8)',
-                                    borderRadius: '10px',
-                                    animation: 'fade 5s forwards', // 增加动画持续时间
-                                    fontSize: '18px',
-                                    color: '#333',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <span style={{ fontWeight: 'bold', marginRight: '5px' }}>{message.name}:</span>
+                    <div className="ai-messages">
+                        {messages.slice(-3).map((message) => ( // 仅显示最新的三条消息
+                            <div key={message.id} className="message-item">
+                                <span className="message-name">{message.name}:</span>
                                 <span>{message.text} {message.emoji}</span>
                             </div>
                         ))}
                     </div>
                 </div>
             )}
-            <style>
-                {`
-                    @keyframes fade {
-                        0% { opacity: 1; }
-                        100% { opacity: 0; }
-                    }
-                `}
-            </style>
+            {captureVideo && modelsLoaded ? (
+                <Button color='primary' fill='outline' onClick={closeWebcam}>关闭直播</Button>
+            ) : (
+                <div className="setup-container">
+                    <div className="setup-title">定制您的主播人设：</div>
+                    <img src="https://raw.githubusercontent.com/Nonentityboy/PicGoToGitHub/master/first.jpg" alt="直播图标" className="setup-image" />
+                    <Button color='primary' fill='solid' onClick={startVideo}>一键直播</Button>
+                </div>
+            )}
         </div>
     );
 }

@@ -1,0 +1,61 @@
+.face-detection-container {
+    text-align: center;
+}
+
+.video-wrapper {
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.video-stream {
+    border-radius: 10px;
+}
+
+.video-canvas {
+    position: absolute;
+}
+
+.ai-messages {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    width: 50%;
+}
+
+.message-item {
+    padding: 10px;
+    margin: 2px 0;
+    background: rgba( 0, 0, 0, 0.4);
+    border-radius: 10px;
+    font-size: 12px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fade 5s forwards;
+}
+
+.message-name {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.setup-container {
+    text-align: center;
+}
+
+.setup-title {
+    padding-top: 60px;
+    font-size: 26px;
+}
+
+.setup-image {
+    width: 300px;
+    margin: 50px 0;
+}
+
+@keyframes fade {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
