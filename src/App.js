@@ -2,10 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { Badge, TabBar } from 'antd-mobile';
 import { AppOutline, MessageOutline, MessageFill, UnorderedListOutline, UserOutline } from 'antd-mobile-icons';
 import FaceDetectionVideo from './components/FaceDetectionVideo'; // 导入视频组件
+import { getRequest } from './api';
 
 function App() {
   const [activeKey, setActiveKey] = useState('home');
   const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+        try {
+            const result = await getRequest('/api/data'); // 调用 getRequest 获取数据
+            // setData(result); // 将数据保存到 state
+            console.log('Fetched data:', result);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    fetchData();
+}, []);
 
   const tabs = [
     {
