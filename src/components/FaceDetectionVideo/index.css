@@ -43,7 +43,7 @@
 .ai-messages {
     position: absolute;
     bottom: 60px;
-    max-height: 100px;
+    max-height: 185px;
     overflow: auto;
     left: 5px;
     width: 65%;
@@ -137,7 +137,7 @@
 
 .bottom-left-container {
     position: absolute;
-    bottom: 165px;
+    bottom: 250px;
     /* 距离底部20px */
     left: 5px;
     /* 距离左侧20px */
