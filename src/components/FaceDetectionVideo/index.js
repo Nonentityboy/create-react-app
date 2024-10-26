@@ -258,7 +258,7 @@ function FaceDetectionVideo({ messages }) {
             } catch (error) {
                 console.error('Error fetching comments:', error);
             }
-        }, 5000),
+        }, 3000),
         []
     );
 
