@@ -3,14 +3,58 @@ import time from '../../../assets/time.svg';
 import fireIcon from '../../../assets/fire.svg';
 import countIcon from '../../../assets/count.svg';
 import giftIcon from '../../../assets/gift.svg';
-
+import { getRequest } from '../../../api';
 import './index.css';
 
 function AvatarHeader({ user, audienceCount, audienceAvatars }) {
     const [timeLeft, setTimeLeft] = useState(300); // 5分钟倒计时（300秒）
     const [score, setScore] = useState(18920); // 初始积分
     const [isAnimating, setIsAnimating] = useState(false);
+    const [isAnimating2, setIsAnimating2] = useState(false);
     const [animatedScore, setAnimatedScore] = useState(0); // 增加效果中的积分变化
+    const [popularity, setPopularity] = useState(2000); // 初始人气值
+    const [animatedPopularity, setAnimatedPopularity] = useState(0); // 人气值的动画效果
+
+    useEffect(() => {
+        // 每隔 5 秒轮询获取人气增量
+        const fetchPopularityIncrement = async () => {
+            try {
+                let roomId = 1;
+                const result = await getRequest(`/api/room_score/${roomId}`);
+                const popularityIncrement = result; // 假设 API 返回 { increment: 50 }
+                if (popularityIncrement > 0) {
+                    animatePopularityIncrease(popularityIncrement); // 调用增量动画
+                }
+            } catch (error) {
+                console.error('Error fetching popularity increment:', error);
+            }
+        };
+        const interval = setInterval(fetchPopularityIncrement, 5000); // 每5秒获取一次人气增量
+        return () => clearInterval(interval);
+    }, [popularity]);
+
+    const animatePopularityIncrease = (increment) => {
+        if (increment <= 0) return;
+        setIsAnimating2(true);
+        const duration = 2000; // 动画总时长
+        const steps = 20; // 分20步完成
+        const amountPerStep = increment / steps;
+        let currentIncrement = 0;
+        let step = 0;
+
+        const interval = setInterval(() => {
+            step++;
+            currentIncrement += amountPerStep;
+            setAnimatedPopularity(prev => prev + Math.floor(amountPerStep));
+
+            if (step >= steps) {
+                clearInterval(interval);
+                setPopularity(prevPopularity => prevPopularity + increment); // 确保最终人气值增加
+                setAnimatedPopularity(0); // 复位动画积分
+                setIsAnimating2(false);
+            }
+        }, duration / steps);
+    };
 
     useEffect(() => {
         if (timeLeft > 0) {
@@ -50,10 +94,6 @@ function AvatarHeader({ user, audienceCount, audienceAvatars }) {
         }, interval);
     };
 
-
-
-
-
     return (
         <div className="avatar-header">
             <div className="user-left">
@@ -80,21 +120,18 @@ function AvatarHeader({ user, audienceCount, audienceAvatars }) {
                     {audienceAvatars.slice(0, 3).map((avatar, index) => (
                         <img key={index} src={avatar} alt="Audience Avatar" className="audience-avatar" />
                     ))}
-                    <div className="fire-count">
+                    <div className={`fire-count ${isAnimating2 ? 'count-animating' : ''}`}>
                         <img className="countdown-timer-icon" src={fireIcon} />
-                        <div>2323</div>
+                        <div>{popularity + animatedPopularity}</div>
                     </div>
                 </div>
 
                 <div className="gift-wrap" onClick={handleGiftClick}>
                     <img src={giftIcon} className="gift-wrap-icon" />
                 </div>
-
-
             </div>
         </div>
     );
 }
 
 export default AvatarHeader;
-
