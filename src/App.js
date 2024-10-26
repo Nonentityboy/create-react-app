@@ -18,7 +18,7 @@ function App() {
 
         const resResults = result.map(item => {
           return {
-            id: item.agent_id,
+            id: `${item.agent_id}_${Math.random().toString(36).substr(2, 9)}`, // 生成随机ID
             name: item.agent_name,
             text: item.text
           }

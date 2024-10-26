@@ -35,7 +35,7 @@ const audienceAvatars = [
 const audienceCount = 2000;
 
 function FaceDetectionVideo({ messages }) {
-    console.log({messages})
+    console.log({ messages })
     // task任务控制
     const [openTaskNum, setOpenTaskNum] = useState(0);
 
@@ -192,6 +192,9 @@ function FaceDetectionVideo({ messages }) {
     const handleVideoOnPlay = (imageUrl) => {
 
 
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current); // 清除之前的定时器
+        }
         intervalRef.current = setInterval(async () => {
             if (canvasRef.current) {
                 const displaySize = { width: videoRef.current.offsetWidth, height: videoRef.current.offsetHeight };
@@ -266,6 +269,25 @@ function FaceDetectionVideo({ messages }) {
     };
 
 
+    const messagesEndRef = useRef(null);
+    const containerRef = useRef(null);
+    const [autoScroll, setAutoScroll] = useState(true);
+
+    useEffect(() => {
+        // 自动滚动到最下面
+        if (autoScroll) {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [messages, autoScroll]);
+
+    const handleScroll = () => {
+        if (containerRef.current) {
+            const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+            // 检查是否滚动到接近底部
+            setAutoScroll(scrollHeight - scrollTop === clientHeight);
+        }
+    };
+
     return (
         <div className="face-detection-container">
             {captureVideo && modelsLoaded && (
@@ -295,13 +317,19 @@ function FaceDetectionVideo({ messages }) {
                     />
 
                     {/* AI Agent Messages */}
-                    <div className="ai-messages">
+                    <div
+                        className="ai-messages"
+                        onScroll={handleScroll}
+                        ref={containerRef}
+                        style={{ overflowY: 'auto', maxHeight: '100px' }} // 设置最大高度以启用滚动
+                    >
                         {messages.map((message) => (
                             <div key={message.id} className="message-item">
                                 <span className="message-name">{message.name}:</span>
                                 <span>{message.text}</span>
                             </div>
                         ))}
+                        <div ref={messagesEndRef} />
                     </div>
 
                     {/* 开场任务 */}
