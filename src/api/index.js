@@ -1,4 +1,4 @@
-const apiUrl = process.env.REACT_APP_API_URL || '';
+const apiUrl = '';
 
 /**
  * 发送 GET 请求

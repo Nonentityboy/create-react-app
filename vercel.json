@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "/api/proxy/:path*"
+      "destination": "https://hackback.xylkt.cn/api/:path*"
     }
   ]
 }
