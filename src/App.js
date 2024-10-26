@@ -9,18 +9,28 @@ function App() {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-        try {
-            const result = await getRequest('/api/data'); // 调用 getRequest 获取数据
-            // setData(result); // 将数据保存到 state
-            console.log('Fetched data:', result);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
+    // 每隔 5 秒轮询获取评论
+    const fetchComments = async () => {
 
-    fetchData();
-}, []);
+      try {
+        let roomId = 1;
+        const result = await getRequest(`/api/room_comments/${roomId}`);
+
+        const resResults = result.map(item => {
+          return {
+            id: item.agent_id,
+            name: item.agent_name,
+            text: item.text
+          }
+        });
+        setMessages([...messages, ...resResults])
+      } catch (error) {
+        console.error('Error fetching comments:', error);
+      }
+    };
+    const interval = setInterval(fetchComments, 2000);
+    return () => clearInterval(interval);
+  }, []);
 
   const tabs = [
     {
@@ -48,27 +58,27 @@ function App() {
     },
   ];
 
-  const generateRandomMessage = () => {
-    const randomMessages = ["大家好！", "直播开始啦！", "保持微笑 😊", "欢迎光临～"];
-    const emojis = ["😊", "😂", "😎", "👍", "🎉"];
-    return {
-      id: Date.now(),
-      name: "AI-Agent",
-      text: randomMessages[Math.floor(Math.random() * randomMessages.length)],
-      emoji: emojis[Math.floor(Math.random() * emojis.length)],
-    };
-  };
+  // const generateRandomMessage = () => {
+  //   const randomMessages = ["大家好！", "直播开始啦！", "保持微笑 😊", "欢迎光临～"];
+  //   const emojis = ["😊", "😂", "😎", "👍", "🎉"];
+  //   return {
+  //     id: Date.now(),
+  //     name: "AI-Agent",
+  //     text: randomMessages[Math.floor(Math.random() * randomMessages.length)],
+  //     emoji: emojis[Math.floor(Math.random() * emojis.length)],
+  //   };
+  // };
 
-  const addMessage = () => {
-    const newMessage = generateRandomMessage();
-    setMessages(prev => [...prev, newMessage]);
+  // const addMessage = () => {
+  //   const newMessage = generateRandomMessage();
+  //   setMessages(prev => [...prev, newMessage]);
 
-    // 自动删除消息
-    setTimeout(() => {
-      setMessages(prev => prev.filter(msg => msg.id !== newMessage.id));
-    }, 5000);
+  //   // 自动删除消息
+  //   setTimeout(() => {
+  //     setMessages(prev => prev.filter(msg => msg.id !== newMessage.id));
+  //   }, 5000);
 
-  };
+  // };
 
   return (
     <div>
@@ -79,7 +89,7 @@ function App() {
           ))}
         </TabBar>
       </div>
-      {activeKey === 'home' && <FaceDetectionVideo messages={messages} addMessage={addMessage} />}
+      {activeKey === 'home' && <FaceDetectionVideo messages={messages}  />}
     </div>
   );
 }

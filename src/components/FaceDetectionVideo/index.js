@@ -3,6 +3,11 @@ import { Button } from 'antd-mobile';
 import * as faceapi from 'face-api.js';
 import { LeftOutline } from 'antd-mobile-icons';
 import AvatarHeader from './AvatarHeader';
+import SpeechToText from './SpeechToText';
+import menuIcon from '../../assets/menu.svg';
+import pauseIcon from '../../assets/pause.svg';
+import startIcon from '../../assets/start.svg';
+import backIcon from '../../assets/back.svg';
 import './index.css';
 
 const user = {
@@ -20,7 +25,7 @@ const audienceAvatars = [
 
 const audienceCount = 2000;
 
-function FaceDetectionVideo({ messages, addMessage }) {
+function FaceDetectionVideo({ messages }) {
     const [modelsLoaded, setModelsLoaded] = useState(false);
     // 控制开启关闭直播
     const [captureVideo, setCaptureVideo] = useState(false);
@@ -28,6 +33,19 @@ function FaceDetectionVideo({ messages, addMessage }) {
     const canvasRef = useRef();
     const videoHeight = 480;
     const videoWidth = 640;
+
+    // 新增状态和事件处理
+    const [isPaused, setIsPaused] = useState(false);
+
+    const handlePause = () => {
+        setIsPaused(true);
+        videoRef.current.pause(); // 暂停视频播放
+    };
+
+    const handleResume = () => {
+        setIsPaused(false);
+        videoRef.current.play(); // 恢复视频播放
+    };
 
     useEffect(() => {
         const loadModels = async () => {
@@ -77,7 +95,6 @@ function FaceDetectionVideo({ messages, addMessage }) {
                     ctx.textAlign = "center";
                     ctx.fillText("我要当网红", x + width / 2, y - 10);
 
-                    addMessage(); // 每次检测到人脸时添加消息
                 });
             }
         }, 1000);
@@ -88,6 +105,11 @@ function FaceDetectionVideo({ messages, addMessage }) {
         videoRef.current.pause();
         videoRef.current.srcObject.getTracks()[0].stop();
         setCaptureVideo(false);
+    };
+
+    const handleTranscriptChange = (text) => {
+        console.log({ text })
+        // addMessage({ name: user.name, text, emoji: '🎤' });
     };
 
     return (
@@ -111,22 +133,37 @@ function FaceDetectionVideo({ messages, addMessage }) {
                     <video ref={videoRef} height={videoHeight} width={videoWidth} playsInline controls={false} onPlay={handleVideoOnPlay} className="video-stream" />
                     <canvas ref={canvasRef} className="video-canvas" />
 
+                    {/* 语音转文字功能 */}
+
+                    <SpeechToText
+                        onTranscriptChange={handleTranscriptChange}
+                        isPaused={isPaused}
+                    />
+
                     {/* AI Agent Messages */}
                     <div className="ai-messages">
-                        {messages.slice(-3).map((message) => ( // 仅显示最新的三条消息
+                        {messages.map((message) => (
                             <div key={message.id} className="message-item">
                                 <span className="message-name">{message.name}:</span>
-                                <span>{message.text} {message.emoji}</span>
+                                <span>{message.text}</span>
                             </div>
                         ))}
                     </div>
                 </div>
             )}
             {captureVideo && modelsLoaded ? (
-                // <Button color='primary' fill='outline' >
-                //     关闭直播
-                // </Button>
-                <LeftOutline onClick={closeWebcam} className="close-button" />
+                <div className="operate-container">
+                    <div className={`overlay ${isPaused ? 'active' : ''}`}></div>
+                    <img src={menuIcon} alt="Menu Icon" className="button-icon" />
+                    <img src={backIcon} onClick={closeWebcam} className="button-icon back-button" alt="Back Icon" />
+                    <img
+                        src={isPaused ? startIcon : pauseIcon}
+                        onClick={isPaused ? handleResume : handlePause}
+                        className="button-icon pause-button"
+                        alt={isPaused ? "Start Icon" : "Pause Icon"}
+                    />
+                    {/* 预留其他操作按钮 */}
+                </div>
             ) : (
                     <div className="setup-container">
                         <div className="setup-title">定制您的主播人设：</div>
