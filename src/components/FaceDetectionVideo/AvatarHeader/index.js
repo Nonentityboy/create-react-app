@@ -3,10 +3,8 @@ import time from '../../../assets/time.svg';
 import fireIcon from '../../../assets/fire.svg';
 import countIcon from '../../../assets/count.svg';
 import giftIcon from '../../../assets/gift.svg';
-import bigGiftIcon from '../../../assets/bigGift.svg';
-import './index.css';
 
-// ffffff
+import './index.css';
 
 function AvatarHeader({ user, audienceCount, audienceAvatars }) {
     const [timeLeft, setTimeLeft] = useState(300); // 5分钟倒计时（300秒）
@@ -53,6 +51,9 @@ function AvatarHeader({ user, audienceCount, audienceAvatars }) {
     };
 
 
+
+
+
     return (
         <div className="avatar-header">
             <div className="user-left">
@@ -64,9 +65,7 @@ function AvatarHeader({ user, audienceCount, audienceAvatars }) {
                     </div>
                     <div className="like-icon">❤️</div>
                 </div>
-                <div
-                    className={`count-count ${isAnimating ? 'count-animating' : ''}`}
-                >
+                <div className={`count-count ${isAnimating ? 'count-animating' : ''}`}>
                     <img className="countdown-timer-icon" src={countIcon} />
                     <div>{animatedScore || score}</div>
                 </div>
@@ -81,7 +80,6 @@ function AvatarHeader({ user, audienceCount, audienceAvatars }) {
                     {audienceAvatars.slice(0, 3).map((avatar, index) => (
                         <img key={index} src={avatar} alt="Audience Avatar" className="audience-avatar" />
                     ))}
-                    {/* <div className="audience-count">{audienceCount}+人</div> */}
                     <div className="fire-count">
                         <img className="countdown-timer-icon" src={fireIcon} />
                         <div>2323</div>
@@ -93,10 +91,6 @@ function AvatarHeader({ user, audienceCount, audienceAvatars }) {
                 </div>
 
 
-                <div className="bigGift-wrap">
-                    <img src={bigGiftIcon} className="bigGift-wrap-icon" />
-
-                </div>
             </div>
         </div>
     );

@@ -141,3 +141,84 @@
     border-radius: 50%;
     background: #ed6582;
 }
+
+/* 玫瑰特效 */
+.rose-effect {
+    position: fixed;
+    bottom: 33%;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    transition: transform 1s ease-in-out;
+    z-index: 999;
+}
+
+.rose-effect.show {
+    transform: translateX(-50%) scale(1.2); /* 由小变大 */
+}
+
+/* 火箭特效 */
+.rocket-effect {
+    position: fixed;
+    bottom: -100px; /* 初始位置在视图下方 */
+    left: 50%;
+    transform: translateX(-50%);
+    transition: bottom 2s ease-out;
+    z-index: 999;
+}
+
+.rocket-effect.show {
+    bottom: 100%; /* 向上飞出视图 */
+}
+
+/* 跑车特效 */
+.car-effect {
+    position: fixed;
+    bottom: 20%; /* 初始位置 */
+    right: -200px; /* 开始时在视图外 */
+    transform: scale(0.5); /* 开始时缩小 */
+    z-index: 999;
+    transition: transform 1s ease-in, right 2s linear; /* 设置较快的动画效果 */
+}
+
+.car-effect.show {
+    right: auto; /* 禁用 right */
+    left: -200px; /* 从最右侧移动到最左侧 */
+    transform: scale(1); /* 变大到正常尺寸 */
+    transition: transform 1s ease-in, left 2s linear; /* 从右至左动画 */
+}
+
+
+/* 礼物选择弹窗 */
+.gift-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px; /* 间距更大，视觉效果更好 */
+}
+
+.gift-modal div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.gift-modal img {
+    width: 60px; /* 调整图片大小 */
+    height: auto;
+    border-radius: 10px;
+    transition: transform 0.3s;
+}
+
+.gift-modal img:hover {
+    transform: scale(1.1); /* 鼠标悬停时稍微放大 */
+}
+

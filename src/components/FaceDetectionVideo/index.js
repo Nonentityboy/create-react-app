@@ -4,6 +4,7 @@ import * as faceapi from 'face-api.js';
 import { throttle } from 'lodash';
 import taskIcon from '../../assets/task0.svg';
 import taskIcon0 from '../../assets/task00.svg';
+import bigGiftIcon from '../../assets/bigGift.svg';
 
 import AvatarHeader from './AvatarHeader';
 import SpeechToText from './SpeechToText';
@@ -34,6 +35,7 @@ const audienceAvatars = [
 const audienceCount = 2000;
 
 function FaceDetectionVideo({ messages }) {
+    console.log({messages})
     // task任务控制
     const [openTaskNum, setOpenTaskNum] = useState(0);
 
@@ -46,6 +48,44 @@ function FaceDetectionVideo({ messages }) {
     const videoHeight = 480;
     const videoWidth = 640;
 
+
+    const animateRose = () => {
+        const roseElement = document.createElement('img');
+        roseElement.src = "https://s21.ax1x.com/2024/10/27/pA0V8Qf.png";
+        roseElement.className = 'rose-effect';
+        document.body.appendChild(roseElement);
+        setTimeout(() => roseElement.classList.add('show'), 100);
+        setTimeout(() => document.body.removeChild(roseElement), 2000);
+    };
+
+    const animateRocket = () => {
+        const rocketElement = document.createElement('img');
+        rocketElement.src = "https://s21.ax1x.com/2024/10/27/pA0VGy8.png";
+        rocketElement.className = 'rocket-effect';
+        document.body.appendChild(rocketElement);
+        setTimeout(() => rocketElement.classList.add('show'), 100);
+        setTimeout(() => document.body.removeChild(rocketElement), 3000);
+    };
+
+    const animateCar = () => {
+        const carElement = document.createElement('img');
+        carElement.src = "https://s21.ax1x.com/2024/10/27/pA0VJOS.png";
+        carElement.className = 'car-effect';
+        document.body.appendChild(carElement);
+
+        // 触发动画效果
+        setTimeout(() => carElement.classList.add('show'), 100);
+
+        // 动画结束后移除元素
+        setTimeout(() => document.body.removeChild(carElement), 3000); // 动画1秒，延迟1.5秒确保完全移出
+    };
+
+    const triggerRandomAnimation = () => {
+        const animations = [animateRose, animateRocket, animateCar];
+        // const animations = [animateCar];
+        const randomIndex = Math.floor(Math.random() * animations.length);
+        animations[randomIndex]();
+    };
 
     const captureScreenshot = () => {
         if (videoRef.current) {
@@ -120,8 +160,39 @@ function FaceDetectionVideo({ messages }) {
             });
     };
 
-    const handleVideoOnPlay = () => {
-        setInterval(async () => {
+    const intervalRef = useRef(null); // 用于保存 intervalId
+
+    const handleEffectClick = async (type) => {
+        setShowModal(false);
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current); // 清除之前的定时器
+        }
+        let imageUrl;
+        switch (type) {
+            case '1':
+                imageUrl = 'https://s21.ax1x.com/2024/10/27/pA0Ztc6.png';
+                break;
+            case '2':
+                imageUrl = 'https://s21.ax1x.com/2024/10/27/pA0ZY1x.png';
+
+                break;
+            case '3':
+                imageUrl = 'https://s21.ax1x.com/2024/10/27/pA0ZJ91.png';
+
+                break;
+            case '4':
+                imageUrl = 'https://s21.ax1x.com/2024/10/27/pA0Z8hR.png';
+
+                break;
+        }
+
+        handleVideoOnPlay(imageUrl);
+    };
+
+    const handleVideoOnPlay = (imageUrl) => {
+
+
+        intervalRef.current = setInterval(async () => {
             if (canvasRef.current) {
                 const displaySize = { width: videoRef.current.offsetWidth, height: videoRef.current.offsetHeight };
                 faceapi.matchDimensions(canvasRef.current, displaySize);
@@ -141,7 +212,7 @@ function FaceDetectionVideo({ messages }) {
                     // ctx.fillText("我要当网红", x + width / 2, y - 10);
 
                     const img = new Image();
-                    img.src = 'https://s21.ax1x.com/2024/10/26/pA0FnC6.png'; // 替换为你的图片URL
+                    img.src = imageUrl; // 替换为你的图片URL
 
                     img.onload = () => {
                         resizedDetections.forEach(detection => {
@@ -163,7 +234,6 @@ function FaceDetectionVideo({ messages }) {
             }
         }, 1000);
     };
-
 
     const closeWebcam = () => {
         videoRef.current.pause();
@@ -189,6 +259,13 @@ function FaceDetectionVideo({ messages }) {
         []
     );
 
+    const [showModal, setShowModal] = useState(false); // 控制弹窗显示
+
+    const handleBigGiftClick = () => {
+        setShowModal(true);
+    };
+
+
     return (
         <div className="face-detection-container">
             {captureVideo && modelsLoaded && (
@@ -207,7 +284,7 @@ function FaceDetectionVideo({ messages }) {
                     </div>
 
 
-                    <video ref={videoRef} height={videoHeight} width={videoWidth} playsInline controls={false} onPlay={handleVideoOnPlay} className="video-stream" />
+                    <video ref={videoRef} height={videoHeight} width={videoWidth} playsInline controls={false} onPlay={() => handleVideoOnPlay('https://s21.ax1x.com/2024/10/27/pA0Z8hR.png')} className="video-stream" />
                     <canvas ref={canvasRef} className="video-canvas" />
 
                     {/* 语音转文字功能 */}
@@ -255,7 +332,11 @@ function FaceDetectionVideo({ messages }) {
                     }
                     {
                         openTaskNum === 2 && (
-                            <div className="avatar-header-open3" onClick={() => setOpenTaskNum(0)}>
+                            <div className="avatar-header-open3"
+                                onClick={() => {
+                                    setOpenTaskNum(0);
+                                    triggerRandomAnimation();
+                                }}>
                                 <img className="avatar-header-open3icon"
                                     src="https://s21.ax1x.com/2024/10/26/pA0PbwR.jpg" />
                             </div>
@@ -291,6 +372,31 @@ function FaceDetectionVideo({ messages }) {
                         className="button-icon pause-button"
                         alt={isPaused ? "Start Icon" : "Pause Icon"}
                     />
+
+                    <div className="bigGift-wrap" onClick={handleBigGiftClick}>
+                        <img src={bigGiftIcon} className="bigGift-wrap-icon" />
+                    </div>
+
+                    {showModal && (
+                        <div className="gift-modal">
+                            <div onClick={() => handleEffectClick('1')}>
+                                <img src="https://s21.ax1x.com/2024/10/27/pA0Ztc6.png" alt="标题" />
+                            </div>
+                            <div onClick={() => handleEffectClick('2')}>
+                                <img src="https://s21.ax1x.com/2024/10/27/pA0ZY1x.png" alt="标题" />
+                            </div>
+                            <div onClick={() => handleEffectClick('3')}>
+                                <img src="https://s21.ax1x.com/2024/10/27/pA0ZJ91.png" alt="标题" />
+                            </div>
+                            <div onClick={() => handleEffectClick('4')}>
+                                <img src="https://s21.ax1x.com/2024/10/27/pA0Z8hR.png" alt="标题" />
+                            </div>
+                            {/* //         https://s21.ax1x.com/2024/10/27/pA0Ztc6.png
+        // https://s21.ax1x.com/2024/10/27/pA0ZY1x.png
+        // https://s21.ax1x.com/2024/10/27/pA0ZJ91.png
+        // https://s21.ax1x.com/2024/10/27/pA0Z8hR.png */}
+                        </div>
+                    )}
                     {/* 预留其他操作按钮 */}
                 </div>
             ) : (
