@@ -69,9 +69,13 @@
 
 .close-button {
     position: absolute;
-    top: 10px; /* 调整到合适的上方位置 */
-    right: 10px; /* 调整到合适的右侧位置 */
-    z-index: 1; /* 确保按钮在视频上方 */
+    bottom: 10px;
+    right: 10px;
+    z-index: 4;
+    padding: 20px;
+    border-radius: 50%;
+    border: 1px solid;
+    font-size: 20px;
 }
 
 .bottom-left-container {

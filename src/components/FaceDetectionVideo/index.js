@@ -1,7 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from 'antd-mobile';
 import * as faceapi from 'face-api.js';
-import './index.css'; // 引入独立的CSS文件
+import { LeftOutline } from 'antd-mobile-icons';
+import AvatarHeader from './AvatarHeader';
+import './index.css';
+
+const user = {
+    avatar: 'https://raw.githubusercontent.com/Nonentityboy/PicGoToGitHub/master/1.png', // 替换为实际头像 URL
+    name: '颜',
+    id: '18838292',
+};
+
+const audienceAvatars = [
+    'https://raw.githubusercontent.com/Nonentityboy/PicGoToGitHub/master/1.png',
+    'https://raw.githubusercontent.com/Nonentityboy/PicGoToGitHub/master/1.png',
+    'https://raw.githubusercontent.com/Nonentityboy/PicGoToGitHub/master/1.png',
+    // 其他观众头像 URL
+];
+
+const audienceCount = 2000;
 
 function FaceDetectionVideo({ messages, addMessage }) {
     const [modelsLoaded, setModelsLoaded] = useState(false);
@@ -77,7 +94,12 @@ function FaceDetectionVideo({ messages, addMessage }) {
         <div className="face-detection-container">
             {captureVideo && modelsLoaded && (
                 <div className="video-wrapper">
-                    {/* 顶部效果 */}
+                    <AvatarHeader
+                        user={user}
+                        audienceCount={audienceCount}
+                        audienceAvatars={audienceAvatars}
+                    />
+                    {/* 底部效果 */}
                     <div className="bottom-left-container">
                         <div className="top-overlay">
                             ⚠️直播提倡绿色直播，严禁涉及政治、涉恐、涉黄、聚众闹事、返现等内容，网警24小时巡查。
@@ -101,9 +123,10 @@ function FaceDetectionVideo({ messages, addMessage }) {
                 </div>
             )}
             {captureVideo && modelsLoaded ? (
-                <Button color='primary' fill='outline' onClick={closeWebcam} className="close-button">
-                    关闭直播
-                </Button>
+                // <Button color='primary' fill='outline' >
+                //     关闭直播
+                // </Button>
+                <LeftOutline onClick={closeWebcam} className="close-button" />
             ) : (
                     <div className="setup-container">
                         <div className="setup-title">定制您的主播人设：</div>
