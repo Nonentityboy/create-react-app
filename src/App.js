@@ -92,6 +92,18 @@ function App() {
         </TabBar>
       </div>
       {activeKey === 'home' && <FaceDetectionVideo messages={messages} />}
+      <div style={{ height: 'calc(100vh - 56px)', overflow: 'auto' }}>
+        {activeKey === 'home' && <FaceDetectionVideo messages={messages} />}
+        {activeKey === 'todo' && (
+          <img src="https://s21.ax1x.com/2024/10/26/pA0ksyD.jpg" alt="待办" style={{ width: '100%', height: 'auto' }} />
+        )}
+        {activeKey === 'message' && (
+          <img src="https://s21.ax1x.com/2024/10/26/pA0kyOe.jpg" alt="消息" style={{ width: '100%', height: 'auto' }} />
+        )}
+        {activeKey === 'personalCenter' && (
+          <img src="https://s21.ax1x.com/2024/10/26/pA0k5Sf.jpg" alt="我的" style={{ width: '100%', height: 'auto' }} />
+        )}
+      </div>
     </div>
   );
 }
