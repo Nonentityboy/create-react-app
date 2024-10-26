@@ -1,17 +1,25 @@
-const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:4000'; // 使用环境变量或本地默认地址
-
 export default async function handler(req, res) {
+    if (req.method === 'OPTIONS') {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        res.status(200).end();
+        return;
+    }
+
     try {
-        const response = await fetch(`${apiUrl}${req.url}`, {
+        const targetUrl = `${apiUrl}${req.url.replace('/api/proxy', '')}`;
+        const response = await fetch(targetUrl, {
             method: req.method,
             headers: {
                 'Content-Type': 'application/json',
                 ...req.headers,
             },
-            body: req.body,
+            body: req.method === 'POST' ? JSON.stringify(req.body) : undefined,
         });
 
         const data = await response.json();
+        res.setHeader('Access-Control-Allow-Origin', '*');
         res.status(response.status).json(data);
     } catch (error) {
         console.error('Error in proxy function:', error);
