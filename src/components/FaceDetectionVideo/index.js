@@ -81,7 +81,7 @@ function FaceDetectionVideo({ messages }) {
     };
 
     const triggerRandomAnimation = () => {
-        const animations = [animateRose, animateRocket, animateCar];
+        const animations = [animateRocket, animateCar];
         // const animations = [animateCar];
         const randomIndex = Math.floor(Math.random() * animations.length);
         animations[randomIndex]();
