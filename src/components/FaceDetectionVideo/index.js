@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Button } from 'antd-mobile';
 import * as faceapi from 'face-api.js';
 import { throttle } from 'lodash';
+import TranscriptDisplay from '../TranscriptDisplay';
 import taskIcon from '../../assets/task0.svg';
 import taskIcon0 from '../../assets/task00.svg';
 import bigGiftIcon from '../../assets/bigGift.svg';
@@ -104,10 +105,10 @@ function FaceDetectionVideo({ messages }) {
         if (screenshot) {
             try {
                 const roomId = "1";
-                await postRequest(`/api/room_update/modal`, {
-                    room_id: roomId,
-                    img: screenshot,
-                });
+                // await postRequest(`/api/room_update/modal`, {
+                //     room_id: roomId,
+                //     img: screenshot,
+                // });
             } catch (error) {
                 console.error('Error sending screenshot:', error);
             }
@@ -115,9 +116,9 @@ function FaceDetectionVideo({ messages }) {
     }, []);
 
     useEffect(() => {
-        const interval = setInterval(sendScreenshot, 5000); // 每5秒发送一次截图
-        return () => clearInterval(interval);
-    }, [sendScreenshot]);
+        // const interval = setInterval(sendScreenshot, 5000); // 每5秒发送一次截图
+        // return () => clearInterval(interval);
+    }, []);
 
     // 新增状态和事件处理
     const [isPaused, setIsPaused] = useState(false);
@@ -249,12 +250,12 @@ function FaceDetectionVideo({ messages }) {
             // 调用接口
             try {
                 let roomId = "1";
-                const result = await postRequest(`/api/room_update/text`, {
-                    room_id: roomId,
-                    text,
-                });
+                // const result = await postRequest(`/api/room_update/text`, {
+                //     room_id: roomId,
+                //     text,
+                // });
 
-                console.log({ result, text })
+                // console.log({ result, text })
             } catch (error) {
                 console.error('Error fetching comments:', error);
             }
@@ -286,6 +287,7 @@ function FaceDetectionVideo({ messages }) {
             setAutoScroll(scrollTop + clientHeight >= scrollHeight - 5);
         }
     };
+    const [isSpeechSupported, setIsSpeechSupported] = useState(true);
 
     return (
         <div className="face-detection-container">
@@ -301,19 +303,20 @@ function FaceDetectionVideo({ messages }) {
                         <div className="top-overlay">
                             ⚠️直播提倡绿色直播，严禁涉及政治、涉恐、涉黄、聚众闹事、返现等内容，网警24小时巡查。
                     </div>
-                        <div className="live-topic">本场直播主题是【从心开始】</div>
+                        <div className="live-topic">本场直播主题是【我是大明星】</div>
                     </div>
 
+                    <TranscriptDisplay />
 
                     <video ref={videoRef} height={videoHeight} width={videoWidth} playsInline controls={false} onPlay={() => handleVideoOnPlay('https://s21.ax1x.com/2024/10/27/pA0Z8hR.png')} className="video-stream" />
                     <canvas ref={canvasRef} className="video-canvas" />
 
                     {/* 语音转文字功能 */}
 
-                    <SpeechToText
+                    {/* <SpeechToText
                         onTranscriptChange={handleTranscriptChange}
                         isPaused={isPaused}
-                    />
+                    /> */}
 
                     {/* AI Agent Messages */}
                     <div
@@ -428,8 +431,7 @@ function FaceDetectionVideo({ messages }) {
                 </div>
             ) : (
                     <div className="setup-container">
-                        <div className="setup-title">定制您的主播人设：</div>
-                        <img src="https://s21.ax1x.com/2024/10/26/pA09ccQ.jpg" alt="直播图标" className="setup-image" />
+                        <img src="https://raw.githubusercontent.com/Nonentityboy/PicGoToGitHub/master/Snipaste_2024-12-20_23-37-15.jpg" alt="直播图标" className="setup-image" />
                         <Button color='primary' fill='solid' onClick={startVideo}>一键直播</Button>
                     </div>
                 )}

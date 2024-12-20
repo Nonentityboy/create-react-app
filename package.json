@@ -1,6 +1,7 @@
 {
   "private": true,
   "dependencies": {
+    "valtio": "^1.13.2",
     "face-api.js": "0.22.2",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -37,5 +38,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://124.222.6.103:8866"
+  "proxy": "http://127.0.0.1:8000"
 }

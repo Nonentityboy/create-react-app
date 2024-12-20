@@ -20,13 +20,13 @@ function AvatarHeader({ user, audienceCount, audienceAvatars }) {
         const fetchPopularity = async () => {
             try {
                 let roomId = 1;
-                const result = await getRequest(`/api/room_score/${roomId}`);
-                const newPopularity = result; // 假设 API 返回全量人气值
-                const increment = newPopularity - popularity;
-                if (increment > 0) {
-                    animatePopularityIncrease(increment); // 调用增量动画
-                }
-                setPopularity(newPopularity); // 更新为新的人气值
+                // const result = await getRequest(`/api/room_score/${roomId}`);
+                // const newPopularity = result; // 假设 API 返回全量人气值
+                // const increment = newPopularity - popularity;
+                // if (increment > 0) {
+                //     animatePopularityIncrease(increment); // 调用增量动画
+                // }
+                // setPopularity(newPopularity); // 更新为新的人气值
             } catch (error) {
                 console.error('Error fetching popularity:', error);
             }
