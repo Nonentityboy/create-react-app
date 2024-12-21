@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Button } from 'antd-mobile';
 import * as faceapi from 'face-api.js';
 import { throttle } from 'lodash';
-import TranscriptDisplay from '../TranscriptDisplay';
 import taskIcon from '../../assets/task0.svg';
 import taskIcon0 from '../../assets/task00.svg';
 import bigGiftIcon from '../../assets/bigGift.svg';
@@ -13,6 +12,8 @@ import menuIcon from '../../assets/menu.svg';
 import pauseIcon from '../../assets/pause.svg';
 import startIcon from '../../assets/start.svg';
 import backIcon from '../../assets/back.svg';
+import { contextService } from '../../store/register';
+
 
 import task1Icon from '../../assets/task1.svg';
 import task2Icon from '../../assets/task2.svg';
@@ -20,8 +21,8 @@ import { postRequest } from '../../api';
 import './index.css';
 
 const user = {
-    avatar: 'https://s21.ax1x.com/2024/10/26/pA0PxSO.jpg', // 替换为实际头像 URL
-    name: '沈',
+    avatar: 'https://raw.githubusercontent.com/Nonentityboy/PicGoToGitHub/master/Snipaste_2024-12-21_11-20-48.jpg', // 替换为实际头像 URL
+    name: '周',
     id: '18838292',
 };
 
@@ -141,6 +142,7 @@ function FaceDetectionVideo({ messages }) {
                 faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
                 faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
                 faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
+                faceapi.nets.ageGenderNet.loadFromUri(MODEL_URL),
             ]);
             setModelsLoaded(true);
         };
@@ -189,6 +191,7 @@ function FaceDetectionVideo({ messages }) {
 
         handleVideoOnPlay(imageUrl);
     };
+    const firstRequestSent = useRef(false); // 用于控制初次请求
 
     const handleVideoOnPlay = (imageUrl) => {
 
@@ -204,6 +207,21 @@ function FaceDetectionVideo({ messages }) {
                 const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions())
                     .withFaceLandmarks()
                     .withFaceExpressions();
+                const ageAndGender = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions())
+                    .withFaceLandmarks().withAgeAndGender().withFaceDescriptors();
+
+                    console.log({ageAndGender, detections})
+
+                if (ageAndGender.length > 0 && detections.length > 0) {
+                    const { age, gender } = ageAndGender[0];
+                    const expressions = detections[0].expressions;
+                    const dominantExpression = Object.keys(expressions).reduce((a, b) => expressions[a] > expressions[b] ? a : b);
+
+                    contextService.updateUserInfo(age, gender, dominantExpression)
+                    // 初次发送用户信息
+                }
+
+
                 const resizedDetections = faceapi.resizeResults(detections, displaySize);
                 const ctx = canvasRef.current.getContext('2d');
                 ctx.clearRect(0, 0, displaySize.width, displaySize.height);
@@ -306,7 +324,6 @@ function FaceDetectionVideo({ messages }) {
                         <div className="live-topic">本场直播主题是【我是大明星】</div>
                     </div>
 
-                    <TranscriptDisplay />
 
                     <video ref={videoRef} height={videoHeight} width={videoWidth} playsInline controls={false} onPlay={() => handleVideoOnPlay('https://s21.ax1x.com/2024/10/27/pA0Z8hR.png')} className="video-stream" />
                     <canvas ref={canvasRef} className="video-canvas" />

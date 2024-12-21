@@ -20,9 +20,9 @@ export default class ContextService {
         this.state = proxy({
             sessionId: '',
 
-            age: null,
-            gender: '',
-            dominantExpression: '',
+            age: 20,
+            gender: 'male',
+            dominantExpression: emotionEnum.neutral,
 
             transcript: '',
         });
@@ -30,13 +30,14 @@ export default class ContextService {
 
     // 更新用户信息的方法
     updateUserInfo(age, gender, dominantExpression) {
-        this.state.age = age.toFixed();
+        this.state.age = age.toFixed(0);
         this.state.gender = gender;
         this.state.dominantExpression = emotionEnum[dominantExpression];
     }
 
     // 追加文本到 transcript
     appendTranscript(text) {
+        console.log({text})
         this.state.transcript += text;
     }
 

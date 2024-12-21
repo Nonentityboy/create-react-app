@@ -10,7 +10,12 @@ import { postRequest } from './api';
 function App() {
   const [activeKey, setActiveKey] = useState('home');
   const [messages, setMessages] = useState([]);
-  const { transcript } = useSnapshot(contextService.state);
+  const {
+    transcript,
+    age,
+    gender,
+    dominantExpression
+   } = useSnapshot(contextService.state);
 
   console.log({transcript}, 'app')
 
@@ -20,9 +25,9 @@ function App() {
       // 调用后端接口获取结果
       const result = await postRequest(`/api/py/chat`, {
         user_info: {
-          age: 30,
-          gender: 'male',
-          dominant_expression: 'happy',
+          age,
+          gender,
+          dominant_expression: dominantExpression,
           transcript,
         },
       });
@@ -54,7 +59,12 @@ function App() {
     return () => {
       clearInterval(interval1);
     };
-  }, [transcript]); // 如果 transcript 变化，也会重新触发
+  },[
+    transcript,
+    age,
+    gender,
+    dominantExpression
+  ]); // 如果 transcript 变化，也会重新触发
 
   const tabs = [
     {
@@ -83,25 +93,99 @@ function App() {
   ];
 
   const generateRandomMessage = () => {
+    // 评论内容数组
     const randomMessages = [
-      "主播有点帅",
-      "直播开始啦！",
-      "保持微笑 😊",
-      "欢迎光临～",
-      "主播今天真好看！",
-      "这是要带货了是吧",
-      "哈哈哈哈好好笑～"
+      "昨天看见你播了",
+      "没错 我小时候看的也是这个",
+      "真年轻",
+      "是学生吗",
+      "妹妹好看",
+      "哥哥真帅",
+      "晚上好",
+      "身材杠杠的",
+      "好美~",
+      "66666666",
+      "好听",
+      "加油",
+      "👌👌👌👌",
+      "🙌",
+      "👍👍👍👍",
+      "💕💕💕💕💕",
+      "❤️❤️❤️❤️",
+      "😍😍😍😍",
+      "🎶🎶🎶",
+      "😎😎😎",
+      "🐂🍺",
+      "😂😂😂😂😂",
+      "🌷🌷🌷🌷",
+      "必须破万",
+      "衣服多少米",
+      "在哪买的",
+      "这是我老婆",
+      "速速出道了",
+      "太帅了",
+      "爱了爱了",
+      "111",
+      "1",
+      "可以了",
+      "55555",
+      "77777",
+      "神似吴彦祖",
+      "快来人啊",
+      "有天赋",
+      "跟原唱差不多",
+      "高手在民间",
+      "这在哪里",
+      "主播真漂亮",
     ];
+
+    // 水军名称数组
+    const agents = [
+      "夏岚",
+      "泡芙",
+      "西窗过雨",
+      "繁華、落盡",
+      "怕安静",
+      "炙雪🥤",
+      "🍭忆过往恍如梦",
+      "不谙世事",
+      "清素笔调",
+      "多余🥤温情",
+      "努力是为将来铺路",
+      "秋水伊人",
+      "安於宿命",
+      "🌈高冷潜质在发光🌈",
+      "怜我孤寂",
+      "流光若逝",
+      "长青诗🥤",
+      "梦想海",
+      "靖柏🌈",
+      "残笑丶何相忘",
+      "一片空白👑",
+      "只此热忱",
+      "风起意阑珊",
+      "г顶级罪人",
+      "青春染上年華",
+      "难耐一身闲",
+      "后来只有后果",
+      "🥤温柔终究扑空",
+    ];
+
+    // 表情符号数组
     const emojis = ["😊", "😂", "😎", "👍", "🎉", "💪", "🔥", "✨", "🥳", "🌟"];
-    const includeEmoji = Math.random() < 0.2; // 20% 概率有 emoji
+
+    // 20% 概率添加 emoji
+    const includeEmoji = Math.random() < 0.2;
+
     return {
       id: Date.now() + Math.random(), // 确保唯一 ID
-      name: `水军${Math.floor(Math.random() * 1000)}`, // 随机水军名称
+      name: agents[Math.floor(Math.random() * agents.length)], // 随机选择水军名称
       text: `${randomMessages[Math.floor(Math.random() * randomMessages.length)]}${
         includeEmoji ? ` ${emojis[Math.floor(Math.random() * emojis.length)]}` : ""
-      }`, // 根据随机数是否添加 emoji
+      }`, // 随机选择评论内容并决定是否添加 emoji
     };
   };
+
 
   const addMessage = () => {
     const newMessage = generateRandomMessage();
@@ -109,7 +193,9 @@ function App() {
   };
 
   // 水军逻辑：定时生成水军消息
-  useEffect(() => {
+useEffect(() => {
+  // 初始延迟 10 秒后启动水军逻辑
+  const startWaterArmy = setTimeout(() => {
     const interval = setInterval(() => {
       const randomDelay = Math.floor(Math.random() * 4000) + 1000; // 随机延迟 1-5 秒
       setTimeout(() => {
@@ -117,8 +203,13 @@ function App() {
       }, randomDelay);
     }, 3000); // 每隔 3 秒生成一个水军消息
 
-    return () => clearInterval(interval); // 清理定时器
-  }, []);
+    // 清理定时器
+    return () => clearInterval(interval);
+  }, 10000); // 延迟 10 秒后启动水军逻辑
+
+  // 清理初始延迟定时器
+  return () => clearTimeout(startWaterArmy);
+}, []);
 
   return (
     <div>
